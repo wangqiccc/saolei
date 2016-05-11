@@ -64,18 +64,18 @@
               item.data("msg").checked=true;
               item.text(0).addClass("num")
               var pos=item.data("msg");
-                              for (var i = pos.x-1; i <=pos.x+1; i++) {
-                                  for (var j = pos.y-1; j <=pos.y+1; j++) {
-                                    if(!$("#"+i+"-"+j).is(".lei")){
-                                         if($("#"+i+"-"+j).data("msg")){
-                                              if($("#"+i+"-"+j).data("msg").num==0){
-                                                newarr.push($("#"+i+"-"+j))
-                                                $("#"+i+"-"+j).text(0).addClass("num")
-                                              }
-                                         }
-                                    }
-                               };
+                  for (var i = pos.x-1; i <=pos.x+1; i++) {
+                      for (var j = pos.y-1; j <=pos.y+1; j++) {
+                        if(!$("#"+i+"-"+j).is(".lei")){
+                             if($("#"+i+"-"+j).data("msg")){
+                                  if($("#"+i+"-"+j).data("msg").num==0){
+                                    newarr.push($("#"+i+"-"+j))
+                                    $("#"+i+"-"+j).text(0).addClass("num")
+                                  }
                              }
+                        }
+                   };
+                 }
                arr=arr.concat(newarr)
                var obj={}
                arr=arr.filter(function(index,value){
