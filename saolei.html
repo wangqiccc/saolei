@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Document</title>
+	<script src="jquery.js"></script>
+	<script>
+       $(function(){
+        do{
+          $(".scene").empty()
+          for (var i = 0; i < 10; i++) {
+             for (var j = 0; j < 10; j++){
+             var islei=Math.random()>0.8;
+                $("<div></div>")
+                 .addClass(function(){
+         return "block"+(islei?" lei":"")
+                })
+                 .mousedown(mousedownhandler)
+                 .data("pos",{x:i,y:j})
+                 .attr("id",i+"-"+j)
+                 .appendTo(".scene")
+             };
+          };
+      }while($(".lei").length!=20)
+         function mousedownhandler(e){
+         	e.preventDefault()
+            if(e.which==1){
+               leftclick.call(this);   
+            }else if(e.which==3){
+              rightclick.call(this)
+            }
+         } 
+         function leftclick(){
+           if($(this).hasClass("flag")){
+           	  return;
+           }	
+           if($(this).hasClass("lei")){
+              alert("lose")
+        	  clearInterval(t)
+              $(".lei").addClass("show")
+           }else{
+           	$(this).addClass("num")
+           	var n=0;
+            var pos=$(this).data("pos");
+            for (var i = pos.x-1; i <=pos.x+1; i++) {
+              	for (var j = pos.y-1; j <=pos.y+1; j++) {
+              	  if($("#"+i+"-"+j).hasClass("lei")){
+              	  	 n++;
+              	  }
+              	 };
+              };
+              $(this).text(n);
+              if(n==0){
+              	for (var i = pos.x-1; i <=pos.x+1; i++) {
+              	for (var j = pos.y-1; j <=pos.y+1; j++) {
+              	 if($("#"+i+"-"+j).length!=0){
+                   if(!$("#"+i+"-"+j).data("check")){
+                    $("#"+i+"-"+j).data("check",true);
+                     leftclick.call($("#"+i+"-"+j)[0]); 
+                    }
+              	   }
+              	 };
+               };
+              }
+           }
+         }
+         function rightclick(){
+            if($(this).hasClass("num")){
+            	return;
+            }
+            if($(this).hasClass("flag")){
+            	$(".flagbox").text(function(index,num){
+                  num=parseInt(num);
+                  return ++num;
+            	})
+            }else{
+            	$(".flagbox").text(function(index,num){
+                  num=parseInt(num);
+                  return --num;
+            	})
+            	if($(".flag").hasClass("lei").length==20){
+            		alert("success")
+            	}
+            }
+            $(this).toggleClass("flag")
+
+         }
+        $(document).on("contextmenu",false)
+        var t=setInterval(function(){
+        	$(".time").text(function(index,n){
+        		var num=parseInt(n);
+              return --num;
+        	})
+        	if($(".time").text()=="0"){
+        		alert("lose")
+        		clearInterval(t)
+        	}
+        },1000)    
+       })
+	</script>
+	<style>
+	html,body{
+		height:100%;
+		transform-style:preserve-3d;
+		background:linear-gradient(to bottom,blue,#fff);
+		overflow:hidden;
+	}
+    .scene{
+    	transform:perspective(800px) rotateX(45deg);
+    	width:500px;height:500px;
+    	margin:0 auto;
+    	border-top:1px solid #000;
+    	border-left:1px solid #000;
+    	box-shadow:5px 5px 5px #333;
+    }
+    .block{
+    	width:49px;height:49px;
+    	border-right:1px solid #000;
+    	border-bottom:1px solid #000;
+    	float:left;
+    	background:#DAA84F;
+    	box-shadow:0 0 8px 3px gold inset;
+    	cursor:pointer;
+    }
+    .show{
+    	background:url(lei.png);
+    }
+    .num{
+    	background:#fff;
+    	text-align: center;
+    	line-height: 50px;
+    	font-size: 16px;
+    	font-weight:bold;
+    }
+    .time{
+    	width:100px;height:50px;
+    	position:fixed;
+    	right:10px;top:10px;
+    	border:1px solid red;
+    	font-weight:bold;
+    	line-height: 50px;
+    	text-align: center;
+    	font-size:30px;
+    	color:red;
+    }
+    .flagbox{
+    	width:80px;height:50px;
+    	border:1px solid black;
+    	position: fixed;
+    	right:10px;top:100px;
+    	font-weight:bold;
+    	line-height: 50px;
+    	text-align: right;
+    	padding-right:20px;
+    	font-size:30px;
+    	color:#000;
+    	background:url(flag.png) no-repeat left;
+    }
+    .flag{
+       background:url(flag.png) #fff;	
+    }
+	</style>
+</head>
+<body>
+	<div class="scene"></div>
+	<div class="time">150</div>
+	<div class="flagbox">20</div>
+</body>
+</html>
