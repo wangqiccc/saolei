@@ -6,6 +6,7 @@
 	<script src="jquery.js"></script>
 	<script>
        $(function(){
+        var count=20;
         do{
           $(".scene").empty()
           for (var i = 0; i < 10; i++) {
@@ -21,7 +22,7 @@
                  .appendTo(".scene")
              };
           };
-      }while($(".lei").length!=20)
+      }while($(".lei").length!=count);
          function mousedownhandler(e){
          	e.preventDefault()
             if(e.which==1){
@@ -35,9 +36,7 @@
            	  return;
            }	
            if($(this).hasClass("lei")){
-              alert("lose")
-        	  clearInterval(t)
-              $(".lei").addClass("show")
+              lose()
            }else{
            	$(this).addClass("num")
            	var n=0;
@@ -52,15 +51,15 @@
               $(this).text(n);
               if(n==0){
               	for (var i = pos.x-1; i <=pos.x+1; i++) {
-              	for (var j = pos.y-1; j <=pos.y+1; j++) {
-              	 if($("#"+i+"-"+j).length!=0){
-                   if(!$("#"+i+"-"+j).data("check")){
-                    $("#"+i+"-"+j).data("check",true);
-                     leftclick.call($("#"+i+"-"+j)[0]); 
-                    }
-              	   }
-              	 };
-               };
+              		for (var j = pos.y-1; j <=pos.y+1; j++) {
+              		   if($("#"+i+"-"+j).length!=0){
+                       if(!$("#"+i+"-"+j).attr("flag")){
+              		   	  $("#"+i+"-"+j).attr("flag",true)
+              		   	  leftclick.call($("#"+i+"-"+j)[0])
+              		   	  }
+              		   }
+              		};
+              	};
               }
            }
          }
@@ -74,16 +73,18 @@
                   return ++num;
             	})
             }else{
+              if($(".flag").length==count){
+                return;
+              }
             	$(".flagbox").text(function(index,num){
                   num=parseInt(num);
                   return --num;
             	})
-            	if($(".flag").hasClass("lei").length==20){
-            		alert("success")
-            	}
             }
             $(this).toggleClass("flag")
-
+            if($(".flag").filter(".lei").length==count){
+                alert("success")
+              }
          }
         $(document).on("contextmenu",false)
         var t=setInterval(function(){
@@ -92,10 +93,28 @@
               return --num;
         	})
         	if($(".time").text()=="0"){
-        		alert("lose")
-        		clearInterval(t)
+              lose();
         	}
-        },1000)    
+        },1000) 
+        function lose(){
+        	alert("lose");
+        	clearInterval(t);
+            $(".lei").addClass("show");
+            $(".block:not(.lei)").addClass("num")
+         $(".scene").css("transform","none").css({
+         	border:"none",
+         	boxShadow:"none"
+         });
+         $(".block").each(function(index){
+            $(this).css({border:0}); 
+            var left=Math.random()*600-300;
+            var top=Math.random()*200-100;
+            var deg=Math.random()*90;
+            $(this).animate({left:left,top:top},500,function(){
+             $(this).css("transform","rotate("+deg+"deg)");
+            })
+         })
+        }   
        })
 	</script>
 	<style>
@@ -108,10 +127,12 @@
     .scene{
     	transform:perspective(800px) rotateX(45deg);
     	width:500px;height:500px;
-    	margin:0 auto;
     	border-top:1px solid #000;
     	border-left:1px solid #000;
     	box-shadow:5px 5px 5px #333;
+    	position: absolute;
+    	left:50%;top:50%;
+    	margin-left:-250px;margin-top:-250px;
     }
     .block{
     	width:49px;height:49px;
@@ -121,6 +142,8 @@
     	background:#DAA84F;
     	box-shadow:0 0 8px 3px gold inset;
     	cursor:pointer;
+    	position:relative;
+    	left:0;top:0;
     }
     .show{
     	background:url(lei.png);
